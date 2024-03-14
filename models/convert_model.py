@@ -323,7 +323,7 @@ def inference(model, nn_features, N, io_size=128):
 
 def generate_test_vectors(model, config, enable_testvector=True):
     if enable_testvector:
-        y, _ = librosa.load("data/test_vector.wav", sr=16000)
+        y, _ = librosa.load("data/outdoor_mix.wav", sr=16000)
         preproc = initialize_config(config["preprocessing"])
         (noisy_mag, noisy_phase, nn_features_tensor) = preproc.process(y)
         ipt, out, state_in, state_out = inference(model, nn_features_tensor, 100, io_size=io_size)

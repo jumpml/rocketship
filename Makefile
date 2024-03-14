@@ -67,8 +67,8 @@ convert_model:
 PTJ_MODEL_NAME = models/pretrained_models/jumpmlnr_pro.ptj
 ifneq ($(OS),Windows_NT)  # Check if the operating system is not Windows
 check: clean convert_model build_library $(EXECUTABLE)
-	scripts/denoise.sh data/test_vector.wav /tmp/output.wav 0.5 -30
-	python models/run_prediction.py  -m $(PTJ_MODEL_NAME)  -i data/test_vector.wav -o /tmp/out_pytorch.wav -g -30 -n 0.5
+	scripts/denoise.sh data/outdoor_mix.wav /tmp/output.wav 0.5 -30
+	python models/run_prediction.py  -m $(PTJ_MODEL_NAME)  -i data/outdoor_mix.wav -o /tmp/out_pytorch.wav -g -30 -n 0.5
 	python models/utils/compare_wave_files.py /tmp/out_pytorch.wav /tmp/output.wav
 
 	scripts/denoise.sh data/outdoor_mix.wav /tmp/output.wav 0.75 -40
