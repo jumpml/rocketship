@@ -1,0 +1,2 @@
+# rocketship.third-party
+This folder is for any third-party code (partial/complete, modified or unmodified) that is used in rocketship. Please refer to respective third-party repository for further information about that code. 
