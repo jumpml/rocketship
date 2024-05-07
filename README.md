@@ -87,7 +87,7 @@ To get started with JumpML Rocketship, follow these steps:
 4. Run JumpML NR Inference/Prediction script (Pytorch + Librosa/Numpy)
 To run the reference algorithm (preprocessing + NN inference + postprocessing) on an input wav file, please run
 ```bash
-python models/run_prediction.py -m models/pretrained_models/jumpmlnr_pro.pth -i data/outdoor_mix.wav -o data/output.wav
+python models/run_prediction.py -m models/pretrained_models/jumpmlnr_pro.ptj -i data/outdoor_mix.wav -o data/output.wav
 ```
 
 ## JumpML NR 
@@ -111,7 +111,7 @@ We recommend using denoise.sh to apply JumpML NR on a noisy input file. The shel
 **Usage:**
 
 ```bash
-./denoise.sh input.wav output.wav naturalness min_gain
+scripts/denoise.sh input.wav output.wav naturalness min_gain
 ```
 
 **Arguments:**
@@ -126,9 +126,9 @@ We recommend using denoise.sh to apply JumpML NR on a noisy input file. The shel
 Tuning is usually a matter of preference and use case. Any of the below example commands are pretty good starting points:
 
 ```bash
-./denoise.sh data/outdoor_mix.wav output_nat100_mg40.wav 1 -40  
-./denoise.sh data/outdoor_mix.wav output_nat50_mg25.wav 0.5 -25
-./denoise.sh data/outdoor_mix.wav output_nat0_mg10.wav 0 -10
+scripts/denoise.sh data/outdoor_mix.wav output_nat100_mg40.wav 1 -40  
+scripts/denoise.sh data/outdoor_mix.wav output_nat50_mg25.wav 0.5 -25
+scripts/denoise.sh data/outdoor_mix.wav output_nat0_mg10.wav 0 -10
 ```
 
 #### Pre-requisites

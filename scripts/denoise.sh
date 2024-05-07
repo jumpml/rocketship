@@ -22,7 +22,7 @@ JUMPML_NR_SR=16000
 RAW_INPUT_FNAME="/tmp/_temp_input.raw"
 RAW_OUTPUT_FNAME="/tmp/_temp_output.raw"
 
-TESTNR=build/testnr
+TESTNR=$SCRIPT_DIR/../build/testnr
 `sox "$1" -c 1 --bits 16 --encoding signed-integer --endian little --rate $JUMPML_NR_SR $RAW_INPUT_FNAME`
 echo `$TESTNR -n $naturalness -m $mingain -i "$RAW_INPUT_FNAME" -o "$RAW_OUTPUT_FNAME"`
 `sox -r $JUMPML_NR_SR -b 16 -e signed-integer $RAW_OUTPUT_FNAME -r $SR1 -b 16 -e signed-integer "$2"`
