@@ -8,7 +8,9 @@
 #ifndef nntests_h
 #define nntests_h
 
-#include "nnlib.h"
+#include "nnlib_float.h"
+#include "nnlib_fixedpt.h"
+
 #include "utils.h"
 #include "signalsifter.h"
 #include "dsplib.h"

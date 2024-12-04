@@ -1,6 +1,6 @@
 #  JumpML Rocketship - Neural Network Inference with Audio Processing
-#  
-#  Copyright 2020-2024 JUMPML LLC
+#
+#  Copyright 2020-2024 JUMPML
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
 #  limitations under the License.
 #
 #  compare_wave_files.py
-# 
+#
 
 import soundfile as sf
 import numpy as np
-import sys 
+import sys
 import matplotlib.pyplot as plt
 from pypesq import pesq
 from pystoi.stoi import stoi
 from utils import calc_mae
+
 
 def compare_wav_files(filepath1, filepath2, plot_enable=False):
     # Read the audio data from the WAV files
@@ -41,7 +42,6 @@ def compare_wav_files(filepath1, filepath2, plot_enable=False):
         data1 = data1[:L]
         data2 = data2[:L]
 
-
     # Compare the audio data
     if np.array_equal(data1, data2):
         print("Waveforms are the same.")
@@ -54,13 +54,14 @@ def compare_wav_files(filepath1, filepath2, plot_enable=False):
         # STOI = 0
 
         mae, mad, mse = calc_mae(data1, data2)
-        print(f'MAE = {mae}\t MAD = {mad}\t MSE = {mse} \t STOI = {STOI:0.4f}')
+        print(f"MAE = {mae}\t MAD = {mad}\t MSE = {mse} \t STOI = {STOI:0.4f}")
         if plot_enable:
             plt.plot(data1)
-            plt.plot(data2)        
+            plt.plot(data2)
             plt.show()
-        
-        return False        
+
+        return False
+
 
 # Get the file paths from the command line
 filepath1 = sys.argv[1]

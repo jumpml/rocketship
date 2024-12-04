@@ -2,43 +2,30 @@
 A C and Python inference library for speech and audio. 
 
 ## Introduction
-C and Python code for 
-- Neural Network model inference
-  - [x] Linear, GRU layers with 8-bit weights and biases
-  - [x] Float32 and fixed-point 16-bit activations
-  - [x] Converts PyTorch model file (pth) to C 
-  - [ ] More NN Layers support coming : LSTM, LayerNorm, Conv1D, ...
-- DSP Pre/postprocessing
-  - [x] STFT / ISTFT based on the awesome kissFFT library
-  - [x] Log Power Spectrum, Spectral Masking and Gain post-processing
-  - [ ] Log Mel filterbank 
-- Free (Apache 2.0) pretrained weights 
-  - [x] ML/AI Noise Reduction: JumpML NR Pro, a 2 MB quantized model with ZERO look-ahead
-  - [ ] Speech-to-Text
-  - [ ] Small Language Model
+C and Python code for  
+- Neural Network model inference  
+  - [x] Linear, GRU layers with 8-bit weights and biases  
+  - [x] Float32 and fixed-point 16-bit activations  
+  - [x] Converts PyTorch model file (pth) to C   
+- DSP Pre/postprocessing  
+  - [x] STFT / ISTFT based on the awesome kissFFT library  
+  - [x] Log Power Spectrum, Spectral Masking and Gain post-processing  
+- Free (Apache 2.0) pretrained weights  
+  - [x] ML/AI Noise Reduction: 330kB, 700kB, 2MB (no lookahead)
 
-Intended for applications at the Edge, typically battery-powered, where Privacy, Availability/Reliability, Low Cost (Energy or Fees), Real-Time and very Low Latency are critical.
+Intended for applications at the Edge, typically battery-powered, where Privacy, Availability/Reliability, Low Cost (Energy or Fees), Real-Time and very Low Latency are critical.  
 
-## Plans 
-Plans are always subject to change
-- [ ] Documentation & Tutorials
-- [ ] Release models for other speech/audio ML tasks
-- [ ] Tools for training and customization
+### Pretrained Models 
 
-### Model class categorization based on size
-Based on the number of model parameters, we use the following (totally arbitrary) model categorization convention
+All weights are quantized to 8-bits and we use bytes to report size.
 
-| Model Category | Model Size        | Chips/MCU Type            |
-|----------------|-------------------|---------------------------|
-| Mini           | < 256 kB          | MCU, DSP                  |
-| Midi           | 256 kB to < 1 MB  | Premium MCU/DSP           |
-| Pro            | 1 MB to < 4 MB    | Accelerator, Mobile CPU   |
-| Pro+           | > 4 MB            | Mobile/Laptop CPU/GPU     |
+| Model Name/size|  Hop length       |
+|----------------|-------------------|
+| 330 kB         | 10 ms             |
+| 700 kB         | 8 ms              |
+| 2 MB           | 8 ms              |
 
 Larger models usually result in improved task performance and quality. 
-
-Please contact info@jumpml.com if you need models in other categories or sizes for your application. 
-
 
 ## Directory Structure
 The library follows the following directory structure:
@@ -52,9 +39,7 @@ The library follows the following directory structure:
   - `convert_ptj_to_onnx.py`: Script to convert models from JumpML's proprietary format (ptj) to ONNX.
   - `gen_tanh_table.py`: Script to generate a tangent hyperbolic (tanh) table.
   - `model/`: Pytorch models defining audio processing models
-  - `pretrained_models/`: Pre-trained models in both ONNX and ptj formats. 
-    - `jumpmlnr_pro.onnx`
-    - `jumpmlnr_pro.ptj`
+  - `pretrained_models/`: Pre-trained models in both ONNX and ptj formats.
   - `run_prediction.py`: Script to run predictions in PyTorch using the trained models.
   - `utils/`: Utility scripts.
 - `requirements.txt`: List of Python dependencies for JumpML Rocketship.
@@ -75,25 +60,32 @@ To get started with JumpML Rocketship, follow these steps:
    cd rocketship
    ```
 
-2. Please create a Python virtual environment and install the packages in requirements.txt:
+2. Please create a Python virtual environment and install the packages in requirements.txt:  
    ```bash
-   pip install requirements.txt
+   pip install requirements.txt  
    ```
 
-3. Build the library using the provided makefile:
-    ```bash
-    make
-    ```
-4. Run JumpML NR Inference/Prediction script (Pytorch + Librosa/Numpy)
-To run the reference algorithm (preprocessing + NN inference + postprocessing) on an input wav file, please run
+3. Build the library using Cmake:  
+   ```bash
+   cd build  
+   cmake ..  
+   make  
+   ```
+4. Run JumpML NR Inference/Prediction script (Pytorch + Librosa/Numpy)  
+To run the reference algorithm (preprocessing + NN inference + postprocessing) on an input wav file, please run  
 ```bash
 python models/run_prediction.py -m models/pretrained_models/jumpmlnr_pro.ptj -i data/outdoor_mix.wav -o data/output.wav
 ```
 
 ## JumpML NR 
-The JumpML NR block diagram is as follows
+The JumpML NR block diagram is
 
-Input Frame (Hop Length) --> STFT (FFT size) --> log-Magnitude (IO size) --> NN Masker --> ISTFT(FFT size) --> Denoised Output (Hop Length)
+![System Block Diagram](docs/system_flow_diagram.png)
+
+The Neural Network architecture is  
+
+![System Block Diagram](docs/nn_architecture_diagram.png)
+
 
 ### Processing steps  
 1. The 16 kHz input signal is framed into Hop Length samples
@@ -148,12 +140,12 @@ Even after this, there may be a popup that says App cannot be run. Please follow
 section of the article.
 
 # Acknowledgements
-We extend our gratitude to the open-source community, in particular 
-- **kissFFT**: [GitHub - kissfft](https://github.com/mborgerding/kissfft): used for FFTs
-- **RNNoise**: [GitHub - RNNoise](https://github.com/xiph/rnnoise): their simple C-based NN inference approach is similar
-- **IRM-based Speech Enhancement using LSTM**: [GitHub - LSTM SE](https://github.com/haoxiangsnr/IRM-based-Speech-Enhancement-using-LSTM) a very good starting point for training models
+We extend our gratitude to the open-source community, in particular  
+- **kissFFT**: [GitHub - kissfft](https://github.com/mborgerding/kissfft): used for FFTs  
+- **RNNoise**: [GitHub - RNNoise](https://github.com/xiph/rnnoise): their simple C-based NN inference approach is similar  
+- **IRM-based Speech Enhancement using LSTM**: [GitHub - LSTM SE](https://github.com/haoxiangsnr/IRM-based-Speech-Enhancement-using-LSTM) a very good starting point for training models  
 
 # Contributions
 Contributions to JumpML Rocketship are welcome and are covered by the Apache License. Feel free to submit pull requests, report issues, or participate in the development process.
 
-(C) 2024  JUMPML LLC. All rights reserved.
+(C) 2024  JUMPML. All rights reserved.

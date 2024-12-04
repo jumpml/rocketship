@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 #define WAB_FRAC_BITS  (7)
-#define INPUT_NUM_FRAC_BITS  (10)
+#define INPUT_NUM_FRAC_BITS  (9)
 #define GRU_NUM_FRAC_BITS  (15)
 #define LIN_NUM_FRAC_BITS  (15)
 #define INPUTLAYER_SHIFT_RIGHT  ((INPUT_NUM_FRAC_BITS) + WAB_FRAC_BITS - (GRU_NUM_FRAC_BITS))
@@ -18,15 +18,18 @@ typedef int8_t nnWeight;
 typedef int8_t nnBias;
 #define BIAS_SCALE (1.f/128)
 
-#define GRU_STATE_SIZE 352
-#define MAX_NEURONS 352
-#define IO_SIZE 128
-#define FFT_SIZE 256
-#define HOP_LENGTH 128
-#define FRAME_SIZE 128
-#define NUM_BINS 129
+#define GRU_STATE_SIZE 128
+#define MAX_NEURONS 160
+#define IO_SIZE 160
 
-#define LOGMAG_EPSILON 0.001
+#define SAMPLE_RATE 16000
+#define FFT_SIZE 320
+#define HOP_LENGTH 160
+#define FRAME_SIZE 160
+#define NUM_BINS 161
+#define FREQ_RESOLUTION 50.0
+
+#define LOGMAG_EPSILON 0.0001
 #define LOGMAG_EPSILON_Q15 (int16_t)(LOGMAG_EPSILON * 32767.0f)
 
 #endif

@@ -1,0 +1,36 @@
+{
+  seed: 0,
+  preprocessing: {
+    module: "run_prediction",
+    main: "preproc",
+    args: {
+      n_fft: 256,
+      hop_length: 128,
+      logmag_epsilon: 0.001,
+    },
+  },
+  model: {
+    module: "model.simple_gru",
+    main: "GRU3",
+    args: {
+      hidden_size: [
+        352,
+        352,
+        352,
+      ],
+      io_size: 128,
+      bias: true,
+      bias_lin: true,
+    },
+  },
+  postprocessing: {
+    module: "run_prediction",
+    main: "postproc",
+    args: {
+      n_fft: 256,
+      hop_length: 128,
+      min_gain: 0.001,
+      naturalness: 0.5,
+    },
+  },
+}

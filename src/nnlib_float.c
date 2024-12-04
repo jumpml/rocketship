@@ -1,6 +1,6 @@
 //  JumpML Rocketship - Neural Network Inference with Audio Processing
 // 
-//  Copyright 2020-2024 JUMPML LLC
+//  Copyright 2020-2024 JUMPML
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 
 #include "nnlib_float.h"
 
+#ifndef USE_NEON
 void JMPNN_linear_matXvec_S8xF32_F32(const int8_t * __restrict__ W, const float * __restrict__ input, const int8_t * __restrict__ bias,
                                   float * __restrict__ output, JMPDSP_Length input_len, JMPDSP_Length output_len,
                                   float weightScale, float biasScale)
@@ -72,6 +73,7 @@ void JMPNN_gru_newGate_S8xF32_F32_act(const int8_t * __restrict__ Wi, const floa
     }
     JMPNN_apply_activation_F32(output, output_len, actType);
 }
+#endif  //#ifndef USE_NEON
 
 void JMPNN_apply_activation_F32(float *data, JMPDSP_Length N, JMPNN_ActivationType actType)
 {
@@ -98,9 +100,8 @@ void JMPNN_vec_interpolation_F32(float *output, const float *interp_vec,
                                  JMPDSP_Length N)
 {
     int i;
-    for (i=0;i<N;i++)
+    for (i = 0; i < N; i++)
     {
-        output[i] = interp_vec[i]*input1[i] + (1.0f-interp_vec[i])*input2[i];
+        output[i] = interp_vec[i] * input1[i] + (1.0f - interp_vec[i]) * input2[i];
     }
-    
 }

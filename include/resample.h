@@ -13,19 +13,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // 
-//  nnlib_types.h
+//  resample.h
 //
-//  Created by Raghavendra Prabhu on 2/10/22.
-//
+#ifndef RESAMPLE_H
+#define RESAMPLE_H
 
-#ifndef NNLIB_TYPES_H
-#define NNLIB_TYPES_H
+#include <stdint.h>
 
-#define ACTIVATION_TANH    0
-#define ACTIVATION_SIGMOID 1
-#define ACTIVATION_RELU    2
-#define ACTIVATION_LINEAR  3
+void upsample_S16(const int16_t* input, int16_t* output, unsigned int input_size, int16_t* last_sample);
+void downsample_S16(const int16_t* input, int16_t* output, unsigned int output_size);
 
-typedef int JMPNN_ActivationType;
+void upsample_F32(const float* input, float* output, unsigned int input_size, float* last_sample);
+void downsample_F32(const float* input, float* output, unsigned int output_size);
 
-#endif /* NNLIB_TYPES_H */
+#endif

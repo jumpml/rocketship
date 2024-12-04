@@ -25,7 +25,6 @@
 #include "jumpml_nr.h"
 #include "jumpml_nr_tuning.h"
 
-#define JUMPML_NR_APP_FRAME_SIZE FRAME_SIZE
 
 void usage(char* progname) {
     fprintf(stderr, "usage:\n"
@@ -34,6 +33,7 @@ void usage(char* progname) {
     "   -o output_file: denoised output file path \n"
     "   -n naturalness: optional float number between 0 (max suppression) and 1 (most natural). Default: 0.5\n"
     "   -m min_gain:    optional minimum suppression gain floor in dB in [-60, 0] dB. Default: -40 dB\n"
+    "   -r sample_rate: optional sample rate for input/output in {8000, 16000}. Default: 16000Hz\n"
     "   -h:             print out this help message\n", progname);
 }
 
@@ -44,19 +44,20 @@ int main(int argc, char **argv)
     char *fname_in, *fname_out;
     int required_args = 0;
     int opt;
-    int16_t input_S16[JUMPML_NR_APP_FRAME_SIZE];
-    int16_t output_S16[JUMPML_NR_APP_FRAME_SIZE];
+    int16_t input_S16[JUMPML_NR_FRAME_SIZE];
+    int16_t output_S16[JUMPML_NR_FRAME_SIZE];
     int8_t jmpnrStBuf[sizeof(DSP_JMPNR_ST_STRU)];
     
     float naturalness = JUMPML_NR_NATURALNESS;
     float min_gain = powf(10, JUMPML_NR_MIN_GAIN/10);
+    int sample_rate = 16000; // Default sample rate
     float val;
     
 //    DSP_JMPNR_ST_STRU jmpNR;
     int frameCount = 0;
     
     void* jmpnr_st_stru = (void *) jmpnrStBuf;
-    while( (opt = getopt(argc, argv, ":hn:m:i:o:")) != -1 )
+    while( (opt = getopt(argc, argv, ":hn:m:i:o:r:")) != -1 )
     {
         switch(opt)
         {
@@ -97,6 +98,17 @@ int main(int argc, char **argv)
                     printf("Min gain value (%f) outside range [-60,0] dB. Using default value: %f \n", val, JUMPML_NR_MIN_GAIN);
                 }
                 break;
+            case 'r':
+                val = atoi(optarg);
+                if (val == 8000 || val == 16000)
+                {
+                    sample_rate = val;
+                }
+                else
+                {
+                    printf("Sample rate must be either 8000 or 16000 Hz. Using default: 16000 Hz\n");
+                }
+                break;
             case ':':
                 printf("Option needs a value\n");
                 return 1;
@@ -117,19 +129,15 @@ int main(int argc, char **argv)
     jumpml_nr_init(jmpnr_st_stru, naturalness, min_gain);
     
     while (1) {
-        fread(input_S16, sizeof(short), JUMPML_NR_APP_FRAME_SIZE, fin);
+        fread(input_S16, sizeof(short), JUMPML_NR_FRAME_SIZE, fin);
         if (feof(fin)) break;
-        
-        jumpml_nr_proc(output_S16, input_S16, JUMPML_NR_APP_FRAME_SIZE,jmpnr_st_stru);
-
+        jumpml_nr_proc(output_S16, input_S16, jmpnr_st_stru, sample_rate);
         frameCount = frameCount + 1;
 //        if (frameCount == 10)
 //        	break;
-
-        fwrite(output_S16, sizeof(short), JUMPML_NR_APP_FRAME_SIZE, fout);
+        fwrite(output_S16, sizeof(short), JUMPML_NR_FRAME_SIZE, fout);
     }
     
-
     fclose(fin);
     fclose(fout);
     return 0;

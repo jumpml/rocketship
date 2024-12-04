@@ -1,6 +1,6 @@
 //  JumpML Rocketship - Neural Network Inference with Audio Processing
 // 
-//  Copyright 2020-2024 JUMPML LLC
+//  Copyright 2020-2024 JUMPML
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -22,19 +22,30 @@
 #include "noise_reduction.h"
 #include <stdint.h>
 #include "signalsifter_config.h"
+#include "biquad.h"
 
 #define JUMPML_NR_FRAME_SIZE HOP_LENGTH   // Do not change.
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct stru_dsp_jmpnr_st
 {
     int NRState_buf[((NR_STATE_SIZE_BYTES)>>2)] __attribute__((aligned(16)));
     uint32_t frameCount;
+    int16_t last_sample;
+    BiquadFilter hsfilter;
+    BiquadParams hsparams;
     NoiseReductionStatePtr NR_Ptr;
 } DSP_JMPNR_ST_STRU;
 
 uint32_t jumpml_nr_init(void *jmpnr_st_ptr, float naturalness, float min_gain);
-uint32_t jumpml_nr_proc(int16_t *output, int16_t *input, int32_t N, void *jmpnr_st_ptr);
-void run_jumpml_nr_prediction(int16_t *output, int16_t *input, NoiseReductionStatePtr NRst_Ptr);
+uint32_t jumpml_nr_proc(int16_t *output, int16_t *input, void *jmpnr_st_ptr, int sr);
+void run_jumpml_nr_prediction(int16_t *output, int16_t *input, NoiseReductionStatePtr NRst_Ptr, BiquadFilter* hsf);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _JUMPML_NR_H_ */
 

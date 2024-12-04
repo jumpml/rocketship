@@ -1,6 +1,6 @@
 //  JumpML Rocketship - Neural Network Inference with Audio Processing
 // 
-//  Copyright 2020-2024 JUMPML LLC
+//  Copyright 2020-2024 JUMPML
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
 #include "noise_reduction.h"
 #include "utils.h"
 #include <assert.h>
+#include <time.h>
+#include <syslog.h>
 
 void create_noise_reduction(NoiseReductionState *nr, float naturalness, float min_gain)
 {
@@ -40,9 +42,8 @@ void create_noise_reduction(NoiseReductionState *nr, float naturalness, float mi
     nr->alphaLowLev = naturalness;
     nr->minGain = min_gain;
     nr->gainBoost = NR_GAIN_BOOST;
-    nr->speechBandStartBin = SPEECH_BAND_START / FFT_SIZE;
-    nr->speechBandEndBin = SPEECH_BAND_END / FFT_SIZE;
-    
+    nr->speechBandStartBin =  SPEECH_BAND_START / FREQ_RESOLUTION;
+    nr->speechBandEndBin = SPEECH_BAND_END / FREQ_RESOLUTION;
 }
 
 void destroy_noise_reduction(NoiseReductionState *nr)
@@ -65,6 +66,7 @@ void postprocess_gains(float *gainsIn, float *gainsState, int numBins, NoiseRedu
 {
     float gain, gain_reverb, gain_lower_level;
     int i;
+
     for (i=0; i<numBins; i++)
     {
         gain = gainsIn[i] * sinf(M_PI_2 * gainsIn[i]);
@@ -88,6 +90,12 @@ void postprocess_gains(float *gainsIn, float *gainsState, int numBins, NoiseRedu
 void noise_reduction_process(NoiseReductionState *nr, const float *input, float *output, unsigned int R)
 {
     float gains[NUM_BINS] __attribute__((aligned(16)));
+
+#if defined(ENABLE_PROFILING)
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+#endif 
+
 #ifndef USE_FLOAT32_SIGNALSIFTER
     int16_t gains_S16[NUM_BINS], Xmag_S16[NUM_BINS];
     JMPDSP_vclr_S16(gains_S16, 1, NUM_BINS);
@@ -107,6 +115,13 @@ void noise_reduction_process(NoiseReductionState *nr, const float *input, float 
 //    print_vector(nr->gains, nr->STFT.numBins, "NR Gains");
     mask_process(&nr->STFT, nr->gains);
     istft_process(&nr->STFT, output, R);
+    
+#if defined(ENABLE_PROFILING)
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double time_elapsed_s = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+    syslog(LOG_WARNING, "noise reduction (took %f ms) \n",time_elapsed_s * 1000);
+#endif
+
 }
 
 

@@ -1,6 +1,6 @@
 //  JumpML Rocketship - Neural Network Inference with Audio Processing
 // 
-//  Copyright 2020-2024 JUMPML LLC
+//  Copyright 2020-2024 JUMPML
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ void print_cpxvec_S16(kiss_fft_cpx_S16 *vec, unsigned int N, char *vec_name, int
 float check_vectors(float *x, float *ref, int N);
 float check_vec_S16(int16_t *x, float *ref, int N, int Qn);
 float check_vec_S32(int32_t *x, float *ref, int N, int Qn);
+float check_vec_S16_S16(int16_t *x, int16_t *ref, int N);
 
 void print_layer_stats(char *layer_name, float min, float max, float mean, float std);
 void print_layer_stats_S16(char *layer_name, int16_t min, int16_t max, int16_t mean, int16_t std);
